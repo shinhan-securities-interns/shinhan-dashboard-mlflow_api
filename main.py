@@ -11,11 +11,6 @@ import os
 import logging
 import database.RedisDriver
 
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.cron import CronTrigger
-import asyncio
-
-
 app = FastAPI()
 
 @app.on_event("startup")
@@ -83,18 +78,6 @@ async def predict_KOSPI() :
     # 결과를 캐시에 저장
     await app.state.mlflow.setKey(key, result, 60 * 60 * 24)
 
-    # 스케줄러 설정
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(predict_KOSPI, CronTrigger(day_of_week='mon-sat', hour=8, minute=30))
-
-    # 스케줄러 시작
-    scheduler.start()
-
-    # 이벤트 루프 실행
-    loop = asyncio.get_event_loop()
-    loop.run_forever()
-
-
 async def predict_KOSDAQ() :
     stock_code = "KQ11"
     key = "KOSDAQ_PREDICTION"
@@ -125,17 +108,6 @@ async def predict_KOSDAQ() :
 
     # 결과를 캐시에 저장
     await app.state.mlflow.setKey(key, result, 60 * 60 * 24)
-
-    # 스케줄러 설정
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(predict_KOSDAQ, CronTrigger(day_of_week='mon-sat', hour=8, minute=30))
-
-    # 스케줄러 시작
-    scheduler.start()
-
-    # 이벤트 루프 실행
-    loop = asyncio.get_event_loop()
-    loop.run_forever()
 
 @app.get("/predict/kospi_kosdaq")
 async def get_kospi_kosdaq_prediction():

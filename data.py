@@ -1,38 +1,18 @@
 # # 필요한 부분 import
 import pandas as pd
-# import numpy as np
-# import matplotlib.pyplot as plt
-# import seaborn as sns
-# import warnings
-# import os
 import FinanceDataReader as fdr
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
-# from sklearn.metrics import *
-
-# # import tensorflow.keras as keras_module
-# # keras_version = keras_module.__version__
 
 # # DL
 import tensorflow as tf
 
-# from keras.models import Sequential
-# from keras.layers import Conv1D,LSTM, Dense
-# from keras.optimizers import Adam
-
-# from keras.losses import Huber
-# from keras.callbacks import EarlyStopping
 import mlflow
 import mlflow.keras
 
-# #%matplotlib inline
-# warnings.filterwarnings('ignore')
-
-# plt.rcParams['font.family'] = 'NanumGothic'
-
 # #################################
 
-# ##필요한 함수들
+#필요한 함수들
 # TensorFlow Dataset을 활용한 시퀸스 데이터셋 구성
 def windowed_dataset(series, window_size, batch_size, shuffle):
     series = tf.expand_dims(series, axis=-1)
@@ -51,9 +31,6 @@ def preprocess_data(stock_code, window_size=50, batch_size=32):
     BATCH_SIZE = batch_size
     
     stock = fdr.DataReader(STOCK_CODE, '2013')
-    # stock['Year'] = stock.index.year
-    # stock['Month'] = stock.index.month
-    # stock['Day'] = stock.index.day
 
     scaler = MinMaxScaler()
     scale_cols = ['Open', 'High', 'Low', 'Close', 'Volume']
