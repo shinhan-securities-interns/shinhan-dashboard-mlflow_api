@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from schemas import PredictIn, PredictOut
 from data import preprocess_data 
 import numpy as np
+from databases import Database
 
 import FinanceDataReader as fdr
 
@@ -14,6 +15,9 @@ import database.RedisDriver
 
 app = FastAPI()
 
+DATABASE_URL = "mysql+pymysql://admin:abcd1234!@database-1.coibefbchrij.ap-northeast-2.rds.amazonaws.com:3306/mys2d"
+database = Database(DATABASE_URL)
+
 @app.on_event("startup")
 async def startup_event():
     # 로그 파일 경로 및 로그 레벨 설정
@@ -23,6 +27,8 @@ async def startup_event():
     )
 
     print("startup_event")
+    await database.connect()
+
     try:
         app.state.mlflow = database.RedisDriver.RedisDriver(f"{REDIS_HOST}:{REDIS_PORT}/12")
 
@@ -92,8 +98,7 @@ async def predict_KOSPI() :
     result = most_recent_prediction
     #print(most_recent_prediction)
 
-    # 결과를 캐시에 저장
-    await app.state.mlflow.setKey(key, result, 60 * 60 * 24)
+    return result
 
 async def predict_KOSDAQ() :
     stock_code = "KQ11"
@@ -138,18 +143,14 @@ async def predict_KOSDAQ() :
 
     result = most_recent_prediction
     #print(most_recent_prediction)
+    return result
 
-    # 결과를 캐시에 저장
-    await app.state.mlflow.setKey(key, result, 60 * 60 * 24)
+@app.post("/insert-prediction/")
+async def insert_prediction():
+    query = "INSERT INTO prediction (kospi, kosdaq) VALUES (:kospi, :kosdaq)"
+    values = {"kospi": f"{predict_KOSPI()}", "kosdaq": f"{predict_KOSDAQ()}"}
 
-@app.get("/predict/kospi_kosdaq")
-async def get_kospi_kosdaq_prediction():
+    await database.execute(query, values)
+    return {"message": "Data inserted successfully"}
 
-    await predict_KOSPI()
-    await predict_KOSDAQ()
-
-    return {
-        "KOSPI_PREDICTION" : await app.state.mlflow.getKey("KOSPI_PREDICTION"),
-        "KOSDAQ_PREDICTION": await app.state.mlflow.getKey("KOSDAQ_PREDICTION"),
-    }
 
