@@ -2,7 +2,9 @@
 import mlflow
 from fastapi import FastAPI
 from schemas import PredictIn, PredictOut
+
 from data import preprocess_data 
+
 import numpy as np
 from databases import Database
 
@@ -38,10 +40,12 @@ async def startup_event():
 
 def get_model_production():
     mlflow.set_tracking_uri("http://127.0.0.1:5000")
-    model_uri = "models:/stock_prediction/production" 
+    # model_uri = "models:/stock_prediction/production" 
+    model_uri = "models:/stock_test/production" 
     model_p = mlflow.keras.load_model(model_uri)
     return model_p
 MODEL = get_model_production()
+
 
 ###################################3
 # def get_model():
@@ -50,8 +54,8 @@ MODEL = get_model_production()
 # MODEL = get_model()
 
 
-REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
-REDIS_PORT = os.environ.get('REDIS_PORT', '6322')
+# REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
+# REDIS_PORT = os.environ.get('REDIS_PORT', '6322')
 
 
 async def predict_KOSPI() :
