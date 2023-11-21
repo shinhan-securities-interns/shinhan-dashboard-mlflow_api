@@ -58,27 +58,16 @@ async def predict_KOSPI() :
 
 ###########나스닥 계산##################
     IXIC = fdr.DataReader('IXIC', '2013')
-    #print(IXIC)
     IXIC_close = np.asarray( IXIC['Close'])
-    #print(IXIC_close)
-
     IXIC_actual_prices = IXIC_close[-1] - IXIC_close[-2]
-    #print(IXIC_actual_prices)
 ########################################
 
     # 2차원 배열을 1차원 리스트로 변환
     stock_predict = pred.flatten().tolist()
-    #print(stock_predict)
 
     # 실제 값과 예측값을 numpy 배열로 변환
     actual_prices = np.asarray(y_test)[50:]
-    predicted_prices = np.asarray(pred).flatten()  # pred가 2차원 배열인 경우 flatten 사용    
-    # 실제 값과 예측값의 다음 날 변화 계산
-    #actual_changes = actual_prices[1:] - actual_prices[:-1]
-
-
-    # predicted_changes = (predicted_prices[-1]) - predicted_prices[-2]
-
+    predicted_prices = np.asarray(pred).flatten() 
     #예측된 값에 나스닥 영향 주기 
     predicted_changes = (predicted_prices[-1] + (2**-10 * IXIC_actual_prices)) - predicted_prices[-2]
     print(predicted_changes)
@@ -86,11 +75,7 @@ async def predict_KOSPI() :
 
     # 변화 방향 예측
     predicted_directions = "up" if predicted_changes > 0 else "down"
-    # predicted_directions 배열의 마지막 요소 추출
-    most_recent_prediction = predicted_directions
-
-    result = most_recent_prediction
-    #print(most_recent_prediction)
+    result = predicted_directions
 
     # 결과를 캐시에 저장
     await app.state.mlflow.setKey(key, result, 60 * 60 * 24)
@@ -104,28 +89,16 @@ async def predict_KOSDAQ() :
 
 ###########나스닥 계산##################
     IXIC = fdr.DataReader('IXIC', '2013')
-    #print(IXIC)
     IXIC_close = np.asarray(IXIC['Close'])
-    #print(IXIC_close)
-
     IXIC_actual_prices = IXIC_close[-1] - IXIC_close[-2]
-    #print(IXIC_actual_prices)
 ########################################
 
     # 2차원 배열을 1차원 리스트로 변환
     stock_predict = pred.flatten().tolist()
-    #print(stock_predict)
 
     # 실제 값과 예측값을 numpy 배열로 변환
     actual_prices = np.asarray(y_test)[50:]
-    predicted_prices = np.asarray(pred).flatten()  # pred가 2차원 배열인 경우 flatten 사용
-
-    #print(predicted_prices)
-
-    # 실제 값과 예측값의 다음 날 변화 계산
-    #actual_changes = actual_prices[1:] - actual_prices[:-1]
-    
-    #predicted_changes = (predicted_prices[-1]) - predicted_prices[-2]
+    predicted_prices = np.asarray(pred).flatten() 
 
     #예측된 값에 나스닥 영향 주기 
     predicted_changes = (predicted_prices[-1] + (2**-10 * IXIC_actual_prices)) - predicted_prices[-2]
@@ -133,11 +106,7 @@ async def predict_KOSDAQ() :
 
     # 변화 방향 예측
     predicted_directions = "up" if predicted_changes > 0 else "down"
-    # predicted_directions 배열의 마지막 요소 추출
-    most_recent_prediction = predicted_directions
-
-    result = most_recent_prediction
-    #print(most_recent_prediction)
+    result = predicted_directions
 
     # 결과를 캐시에 저장
     await app.state.mlflow.setKey(key, result, 60 * 60 * 24)
