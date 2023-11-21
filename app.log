@@ -670,3 +670,7 @@ DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): data.krx.co.kr:80
 DEBUG:urllib3.connectionpool:http://data.krx.co.kr:80 "POST /comm/bldAttendant/getJsonData.cmd HTTP/1.1" 200 28448
 DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): data.krx.co.kr:80
 DEBUG:urllib3.connectionpool:http://data.krx.co.kr:80 "POST /comm/bldAttendant/getJsonData.cmd HTTP/1.1" 200 13061
+DEBUG:urllib3.connectionpool:Starting new HTTP connection (1): data.krx.co.kr:80
+INFO:databases:Connected to database mysql+pymysql://admin:********@database-1.coibefbchrij.ap-northeast-2.rds.amazonaws.com:3306/mys2d
+DEBUG:databases:Query: INSERT INTO prediction (kospi, kosdaq) VALUES (%(kospi)s, %(kosdaq)s) Args: {'kospi': '<coroutine object predict_KOSPI at 0x000001656DA333E0>', 'kosdaq': '<coroutine object predict_KOSDAQ at 0x000001656DA333E0>'}
+DEBUG:databases:Query: INSERT INTO prediction (kospi, kosdaq) VALUES (%(kospi)s, %(kosdaq)s) Args: {'kospi': '<coroutine object predict_KOSPI at 0x000001656DA333E0>', 'kosdaq': '<coroutine object predict_KOSDAQ at 0x000001656DA333E0>'}

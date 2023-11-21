@@ -103,5 +103,6 @@ Werkzeug==3.0.1
 wrapt==1.14.1
 xgboost==1.7.5
 zipp==3.17.0
+databases==0.8.0
 
 
