@@ -40,8 +40,7 @@ async def startup_event():
 
 def get_model_production():
     mlflow.set_tracking_uri("http://127.0.0.1:5000")
-    # model_uri = "models:/stock_prediction/production" 
-    model_uri = "models:/stock_test/production" 
+    model_uri = "models:/stock_prediction/production" 
     model_p = mlflow.keras.load_model(model_uri)
     return model_p
 MODEL = get_model_production()
@@ -68,7 +67,7 @@ async def predict_KOSPI() :
 
 ###########나스닥 계산##################
     IXIC = fdr.DataReader('IXIC', '2013')
-    IXIC_close = np.asarray( IXIC['Close'])
+    IXIC_close = np.asarray(IXIC['Close'])
     IXIC_actual_prices = IXIC_close[-1] - IXIC_close[-2]
 ########################################
 

@@ -67,7 +67,7 @@ mlflow.set_tracking_uri(mlflow_uri)
 
 
 # 3. 실험 생성 및 실험 ID 얻기
-experiment_name = "stock_test"
+experiment_name = "prediction"
 exp_id = create_mlflow_experiment(mlflow_uri, experiment_name)
 
 # 주식 코드
@@ -100,7 +100,7 @@ for i in range(1, 2):
         history = model.fit(train_data, validation_data=test_data, epochs=50, callbacks=[early_stopping]).history
 
         # Log the model
-        mlflow.keras.log_model(model, "model", registered_model_name= "stock_test")
+        mlflow.keras.log_model(model, "model", registered_model_name= "stock_prediction")
 
         # Disable autolog
         mlflow.keras.autolog(disable=True)
@@ -140,7 +140,7 @@ for i in range(1, 2):
                         epochs=50,
                         callbacks=[earlystopping]).history
     #모델 등록 (best 모델 기록하기)
-        mlflow.keras.log_model(model2, "model2",  registered_model_name="stock_test")
+        mlflow.keras.log_model(model2, "model2",  registered_model_name="stock_prediction")
     #autolog 종료
         mlflow.keras.autolog(disable = True)
 
@@ -179,7 +179,7 @@ for i in range(1, 2):
                         epochs=50,
                         callbacks=[earlystopping]).history
     #모델 등록 (best 모델 기록하기)
-        mlflow.keras.log_model(model3, "model3",  registered_model_name="stock_test")
+        mlflow.keras.log_model(model3, "model3",  registered_model_name="stock_prediction")
     #autolog 종료
         mlflow.keras.autolog(disable = True)
 
@@ -220,6 +220,6 @@ for i in range(1, 2):
                         epochs=50,
                         callbacks=[earlystopping]).history
     #모델 등록 (best 모델 기록하기)
-        mlflow.keras.log_model(model4, "model4",  registered_model_name="stock_test")
+        mlflow.keras.log_model(model4, "model4",  registered_model_name="stock_prediction")
     #autolog 종료
         mlflow.keras.autolog(disable = True)
