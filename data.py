@@ -31,6 +31,7 @@ def preprocess_data(stock_code, window_size=50, batch_size=32):
     BATCH_SIZE = batch_size
     
     stock = fdr.DataReader(STOCK_CODE, '2013')
+    # IXIC = fdr.DataReader( 'IXIC', '2013')
 
     scaler = MinMaxScaler()
     scale_cols = ['Open', 'High', 'Low', 'Close', 'Volume']

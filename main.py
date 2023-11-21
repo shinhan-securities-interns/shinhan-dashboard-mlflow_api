@@ -5,6 +5,7 @@ from schemas import PredictIn, PredictOut
 from data import preprocess_data 
 import numpy as np
 
+import FinanceDataReader as fdr
 
 import json
 import os
@@ -52,11 +53,22 @@ async def predict_KOSPI() :
     key = "KOSPI_PREDICTION"
     train_data, test_data, y_test = preprocess_data(stock_code=stock_code, window_size=50, batch_size=32)
     pred = MODEL.predict(test_data)
-    print(pred)
+    #print(pred)
+
+
+###########나스닥 계산##################
+    IXIC = fdr.DataReader('IXIC', '2013')
+    #print(IXIC)
+    IXIC_close = np.asarray( IXIC['Close'])
+    print(IXIC_close)
+
+    IXIC_actual_prices = IXIC_close[-1] - IXIC_close[-2]
+    print(IXIC_actual_prices)
+########################################
 
     # 2차원 배열을 1차원 리스트로 변환
     stock_predict = pred.flatten().tolist()
-    print(stock_predict)
+    #print(stock_predict)
 
 
     # 캐시된 데이터가 없으면 데이터 생성 및 JSON 직렬화 후 Redis에 저장
@@ -66,14 +78,22 @@ async def predict_KOSPI() :
     predicted_prices = np.asarray(pred).flatten()  # pred가 2차원 배열인 경우 flatten 사용
     # 실제 값과 예측값의 다음 날 변화 계산
     actual_changes = actual_prices[1:] - actual_prices[:-1]
-    predicted_changes = (predicted_prices[-1]) - predicted_prices[-2]
+
+
+    # predicted_changes = (predicted_prices[-1]) - predicted_prices[-2]
+
+    #예측된 값에 나스닥 영향 주기 
+    predicted_changes = (predicted_prices[-1] + (2**-10 * IXIC_actual_prices)) - predicted_prices[-2]
+    print(predicted_changes)
+
+
     # 변화 방향 예측
     predicted_directions = "up" if predicted_changes > 0 else "down"
     # predicted_directions 배열의 마지막 요소 추출
     most_recent_prediction = predicted_directions
 
     result = most_recent_prediction
-    print(most_recent_prediction)
+    #print(most_recent_prediction)
 
     # 결과를 캐시에 저장
     await app.state.mlflow.setKey(key, result, 60 * 60 * 24)
@@ -83,11 +103,21 @@ async def predict_KOSDAQ() :
     key = "KOSDAQ_PREDICTION"
     train_data, test_data, y_test = preprocess_data(stock_code=stock_code, window_size=50, batch_size=32)
     pred = MODEL.predict(test_data)
-    print(pred)
+    #print(pred)
+
+###########나스닥 계산##################
+    IXIC = fdr.DataReader('IXIC', '2013')
+    #print(IXIC)
+    IXIC_close = np.asarray(IXIC['Close'])
+    print(IXIC_close)
+
+    IXIC_actual_prices = IXIC_close[-1] - IXIC_close[-2]
+    print(IXIC_actual_prices)
+########################################
 
     # 2차원 배열을 1차원 리스트로 변환
     stock_predict = pred.flatten().tolist()
-    print(stock_predict)
+    #print(stock_predict)
 
 
     # 캐시된 데이터가 없으면 데이터 생성 및 JSON 직렬화 후 Redis에 저장
@@ -97,7 +127,13 @@ async def predict_KOSDAQ() :
     predicted_prices = np.asarray(pred).flatten()  # pred가 2차원 배열인 경우 flatten 사용
     # 실제 값과 예측값의 다음 날 변화 계산
     actual_changes = actual_prices[1:] - actual_prices[:-1]
-    predicted_changes = (predicted_prices[-1]) - predicted_prices[-2]
+    
+    #predicted_changes = (predicted_prices[-1]) - predicted_prices[-2]
+
+    #예측된 값에 나스닥 영향 주기 
+    predicted_changes = (predicted_prices[-1] + (2**-10 * IXIC_actual_prices)) - predicted_prices[-2]
+    print(predicted_changes)
+
     # 변화 방향 예측
     predicted_directions = "up" if predicted_changes > 0 else "down"
     # predicted_directions 배열의 마지막 요소 추출
